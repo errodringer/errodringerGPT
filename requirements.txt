@@ -1,0 +1,4 @@
+torch==2.10.0
+numpy==2.4.2
+matplotlib==3.10.8
+datasets==4.5.0
