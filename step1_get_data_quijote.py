@@ -71,7 +71,7 @@ def load_and_clean():
     print("=" * 55)
     print(f"  Total characters   : {len(text):,}")
     print(f"  Total words        : {len(text.split()):,}")
-    print(f"  First 200 chars    :\n")
+    print("  First 200 chars    :\n")
     print(text[:200])
     print("=" * 55)
 
@@ -97,7 +97,7 @@ def tokenize(text):
     vocabulary = sorted(set(text))
     vocab_size = len(vocabulary)
 
-    print(f"\n🔤  VOCABULARY")
+    print("\n🔤  VOCABULARY")
     print(f"  Size   : {vocab_size} unique characters")
     print(f"  Chars  : {''.join(vocabulary[:40])}...")
 
@@ -118,7 +118,7 @@ def tokenize(text):
     # Small demo for the video 🎬
     example = "En un lugar de la Mancha"
     encoded = encode(example)
-    print(f"\n🧪  TOKENIZATION DEMO:")
+    print("\n🧪  TOKENIZATION DEMO:")
     print(f'  Text     : "{example}"')
     print(f"  Tokens   : {encoded}")
     print(f"  Back     : \"{decode(encoded)}\"")
@@ -143,7 +143,7 @@ def split_and_save(text, encode):
     train = data[:split]
     val   = data[split:]
 
-    print(f"\n✂️  DATASET SPLIT:")
+    print("\n✂️  DATASET SPLIT:")
     print(f"  Total tokens       : {n:,}")
     print(f"  Training (90%)     : {len(train):,} tokens")
     print(f"  Validation (10%)   : {len(val):,}   tokens")

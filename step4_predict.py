@@ -10,10 +10,8 @@
 import json
 import math
 import torch
-import matplotlib
 import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
-from step2_model import MiniGPT, Config
+from step2_model import ErrGPT, Config
 
 
 # ─────────────────────────────────────────────
@@ -36,7 +34,7 @@ def load_model(path):
     char_to_idx = checkpoint["vocabulary"]["char_to_idx"]
 
     # Rebuild model
-    model = MiniGPT(cfg)
+    model = ErrGPT(cfg)
     model.load_state_dict(checkpoint["model_state"])
     model.eval()
 
@@ -83,7 +81,7 @@ def plot_loss(history_path="model/historial_perdida.json"):
         ax.axhline(y=random_loss, color="#888", linestyle=":",
                    linewidth=1, label=f"Random (log vocab ≈ {random_loss:.2f})")
 
-    ax.set_title("📊  Loss Curve — MiniGPT Quixote",
+    ax.set_title("📊  Loss Curve — ErrGPT",
                  color="white", fontsize=14, pad=15)
     ax.set_xlabel("Iteration", color="#aaa")
     ax.set_ylabel("Loss (Cross-Entropy)", color="#aaa")
@@ -132,7 +130,6 @@ def visualize_attention(model, text, char_to_idx, idx_to_char, cfg):
         q, k, v = qkv.split(cfg.embedding_dim, dim=2)
         def sh(t): return t.view(B,T2,cfg.num_heads,cfg.embedding_dim//cfg.num_heads).transpose(1,2)
         q,k,v = sh(q), sh(k), sh(v)
-        import math
         scores = (q @ k.transpose(-2,-1)) / math.sqrt(cfg.embedding_dim//cfg.num_heads)
         mask = torch.tril(torch.ones(T2,T2))
         scores = scores.masked_fill(mask==0, float("-inf"))
@@ -214,7 +211,7 @@ def interactive_mode(model, cfg, idx_to_char, char_to_idx):
             continue
 
         if not seed:
-            seed = "In a place"
+            seed = "Suscribete a Errodringer para más contenido de IA en español"
 
         # Encode seed
         tokens_list = [char_to_idx.get(c, 0) for c in seed]
@@ -248,17 +245,17 @@ if __name__ == "__main__":
 
     # 2. Load model
     print("\n📂  STEP 2: Loading model...")
-    model, cfg, idx_to_char, char_to_idx = load_model("model/minigpt_quixote.pt")
+    model, cfg, idx_to_char, char_to_idx = load_model("model/errgpt.pt")
 
     # 3. Attention map (visually very impressive for the video)
     print("\n🔍  STEP 3: Visualizing attention...")
-    demo_text = "In a place of La Mancha"[:cfg.context_length]
+    demo_text = "Dale al like"[:cfg.context_length]
     visualize_attention(model, demo_text, char_to_idx, idx_to_char, cfg)
 
     # 4. Generation with different temperatures (demonstration)
     print("\n\n🔡️   DEMO: Effect of temperature on generation")
     print("="*60)
-    seed = "Sancho Panza"
+    seed = "Esto es una prueba"
     tokens_list = [char_to_idx.get(c, 0) for c in seed]
     base_tokens  = torch.tensor([tokens_list], dtype=torch.long)
 

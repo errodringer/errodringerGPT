@@ -19,7 +19,7 @@ import time
 import math
 import numpy as np
 import torch
-from step2_model import MiniGPT, Config
+from step2_model import ErrGPT, Config
 
 
 # ─────────────────────────────────────────────
@@ -128,7 +128,7 @@ def evaluate_loss(model, train_data, val_data, cfg, n_batches=10):
 # ─────────────────────────────────────────────
 
 @torch.no_grad()
-def generate_sample(model, idx_to_char, cfg, n_tokens=200, seed="Model, continue the phrase with"):
+def generate_sample(model, idx_to_char, cfg, n_tokens=200, seed="Modelo, continúa el texto: "):
     model.eval()
 
     # Encode seed text character by character
@@ -160,7 +160,7 @@ def train():
 
     # 2. Create the model
     cfg.vocab_size = vocab_size
-    model = MiniGPT(cfg).to(cfg.device)
+    model = ErrGPT(cfg).to(cfg.device)
     model.count_parameters()
 
     # 3. Optimizer AdamW with Weight Decay
@@ -267,15 +267,14 @@ def train():
             "char_to_idx": char_to_idx
         }
     }
-    torch.save(checkpoint, "model/minigpt_quixote.pt")
+    torch.save(checkpoint, "model/errgpt.pt")
 
     print("\n" + "=" * 60)
     print("✅  TRAINING COMPLETED")
-    print(f"   Model saved to 'model/minigpt_quixote.pt'")
+    print("   Model saved to 'model/errgpt.pt'")
     print("=" * 60)
 
     # Save history for plotting
-    import json
     with open("model/history_loss.json", "w") as f:
         json.dump(history, f)
 
@@ -289,7 +288,7 @@ if __name__ == "__main__":
     print("\n\n🁭  FINAL GENERATION (temperature=0.9):")
     print("=" * 60)
     cfg_final = Config()
-    for seed in ["In a place of La Mancha", "Sancho Panza answered", "The knight"]:
+    for seed in ["Esta ciudad es", "Errodringer es un canal", "Suscribete a"]:
         print(f'\n🔹 Seed: "{seed}"')
         text = generate_sample(model, idx_to_char, cfg_final, n_tokens=150, seed=seed)
         print(text)

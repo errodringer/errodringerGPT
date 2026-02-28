@@ -28,11 +28,10 @@ ARCHITECTURE: Transformer Decoder (same as GPT)
   Probability of each token
 """
 
+import math
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import math
-
 
 # ─────────────────────────────────────────────
 #  HYPERPARAMETERS
@@ -45,20 +44,20 @@ import math
 class Config:
     # ─ Architecture ─
     vocab_size     = None  # Filled automatically with the dataset
-    context_length = 64    # How many tokens back the model "looks"
+    context_length = 128    # How many tokens back the model "looks"
                            # GPT-4 uses ~128,000.
 
     num_layers     = 4     # Number of stacked Transformer blocks
     num_heads      = 4     # Parallel attention heads
-    embedding_dim  = 32    # Dimension of internal vectors
+    embedding_dim  = 128    # Dimension of internal vectors
                            # (must be divisible by num_heads)
 
     dropout        = 0.1   # Regularization: randomly deactivates neurons
 
     # ─ Training ─
-    batch_size     = 32    # How many sequences we process at once
+    batch_size     = 384    # How many sequences we process at once
     learning_rate  = 1e-3  # How much we adjust weights at each step
-    max_iterations = 500  # Total training steps
+    max_iterations = 5000  # Total training steps
 
     # device      = "cuda" if torch.cuda.is_available() else "cpu"
     device      = "mps" if torch.backends.mps.is_available() else "cpu"  # For Mac with Apple GPU
@@ -136,7 +135,7 @@ class MultiHeadAttention(nn.Module):
         weights = self.dropout_attn(weights)
 
         # 5. Mix Values according to attention weights
-        output = weights @ v                                # (B, H, T, head_dim)
+        output = weights @ v                              # (B, H, T, head_dim)
         output = output.transpose(1, 2).contiguous()      # (B, T, H, head_dim)
         output = output.view(B, T, C)                     # (B, T, embedding_dim)
 
@@ -159,7 +158,7 @@ class NeuralNetwork(nn.Module):
         # 4x expansion is standard in Transformers
         self.net = nn.Sequential(
             nn.Linear(cfg.embedding_dim, 4 * cfg.embedding_dim),
-            nn.GELU(),           # Smooth activation, better than ReLU for text
+            nn.GELU(),  # Smooth activation, better than ReLU for text
             nn.Linear(4 * cfg.embedding_dim, cfg.embedding_dim),
             nn.Dropout(cfg.dropout),
         )
@@ -197,7 +196,7 @@ class TransformerBlock(nn.Module):
 #  THE COMPLETE MODEL: MINI-GPT
 # ─────────────────────────────────────────────
 
-class MiniGPT(nn.Module):
+class ErrGPT(nn.Module):
 
     def __init__(self, cfg: Config):
         super().__init__()
@@ -317,12 +316,12 @@ class MiniGPT(nn.Module):
 # ─────────────────────────────────────────────
 
 if __name__ == "__main__":
-    print("🔨  Building MiniGPT model...")
+    print("🔨  Building ErrGPT model...")
 
     cfg = Config()
     cfg.vocab_size = 80  # ~number of unique chars in Spanish
 
-    model = MiniGPT(cfg)
+    model = ErrGPT(cfg)
     model.count_parameters()
 
     # Test with random data

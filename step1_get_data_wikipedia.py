@@ -17,6 +17,7 @@ Processing time:        1-2 min
 
 import os
 import json
+import re
 import numpy as np
 from datasets import load_dataset
 
@@ -34,7 +35,7 @@ from datasets import load_dataset
 # 100_000  →  ~1GB   text,  requires enough RAM
 #
 # N_ARTICLES = 20_000
-N_ARTICLES = 1_000
+N_ARTICLES = 10_000
 
 # Minimum article length (in characters).
 # We filter very short articles (redirects, stubs)
@@ -52,8 +53,8 @@ def download_wikipedia():
     print("=" * 60)
     print("⬇️   DOWNLOADING SPANISH WIKIPEDIA (streaming)")
     print("=" * 60)
-    print(f"  Source   : wikimedia/wikipedia (20231101.es)")
-    print(f"  Mode     : streaming — starts now, without waiting for full download")
+    print("  Source   : wikimedia/wikipedia (20231101.es)")
+    print("  Mode     : streaming — starts now, without waiting for full download")
     print(f"  Articles : {N_ARTICLES:,}")
     print()
 
@@ -87,7 +88,6 @@ def download_wikipedia():
 
 def clean_article(text: str) -> str:
     """Basic cleanup of a Wikipedia article."""
-    import re
 
     # Remove reference/bibliography sections at the end
     # (usually start with "== Referencias ==" or "== See also ==")
@@ -143,7 +143,7 @@ def build_corpus(ds) -> str:
     print(f"  Approx. size        : {len(corpus) / 1e6:.1f} MB")
 
     # Preview
-    print(f"\n📖  Preview (first 300 characters):\n")
+    print("\n📖  Preview (first 300 characters):\n")
     print(corpus[:300])
     print("  ...")
 
@@ -171,7 +171,7 @@ def tokenize(corpus: str):
     print("\n" + "=" * 60)
     print("🔤  TOKENIZATION")
     print("=" * 60)
-    print(f"  Type            : Character by character")
+    print("  Type            : Character by character")
     print(f"  Vocab size      : {vocab_size} unique characters")
     print(f"  First chars     : {''.join(vocabulary[:50])}")
     print()
@@ -187,7 +187,7 @@ def tokenize(corpus: str):
     # Demo for the video
     example    = "Artificial intelligence in Spanish"
     encoded = encode(example)
-    print(f"\n🧪  Tokenization demo:")
+    print("\n🧪  Tokenization demo:")
     print(f'  Text     : "{example}"')
     print(f"  Tokens   : {encoded}")
     print(f'  Back     : "{decode(encoded)}"')
@@ -254,16 +254,16 @@ def print_summary(train, val, vocab_size):
     print("\n" + "=" * 60)
     print("🎉  ALL DONE — SUMMARY")
     print("=" * 60)
-    print(f"  Source         : Wikipedia in Spanish")
+    print("  Source         : Wikipedia in Spanish")
     print(f"  Articles       : {N_ARTICLES:,}")
     print(f"  Vocabulary     : {vocab_size} unique characters")
     print(f"  Train tokens   : {len(train):,}")
     print(f"  Val tokens     : {len(val):,}")
     print()
     print("  Generated files:")
-    print(f"    data/train.bin")
-    print(f"    data/val.bin")
-    print(f"    data/vocabulary.json")
+    print("    data/train.bin")
+    print("    data/val.bin")
+    print("    data/vocabulary.json")
     print()
     print("🚀  Next step: python step3_train.py")
     print("=" * 60)
